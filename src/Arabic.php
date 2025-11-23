@@ -3371,8 +3371,11 @@ class Arabic
     {
         $arg = $this->arQueryLex($arg);
         $argLike = preg_replace('/\(([^()]|(?R))*\)\??/', '', $arg);
-        $sql = implode(" LIKE '%$argLike%' AND REGEXP '$arg') OR (", $this->arQueryFields) .
-               " LIKE '%$argLike%' AND REGEXP '$arg'";
+        $parts = [];
+        foreach ($this->arQueryFields as $field) {
+            $parts[] = "$field LIKE '%$argLike%' AND $field REGEXP '$arg'";
+        }
+        $sql = implode(' OR ', $parts);
         /*
         $sql = ' REPLACE(' . implode(", 'ـ', '') REGEXP '$arg' OR REPLACE(", $this->arQueryFields) .
                ", 'ـ', '') REGEXP '$arg'";
